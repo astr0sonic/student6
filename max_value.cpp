@@ -1,45 +1,39 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <limits>
+using namespace std;
 
-double performOperation(double a, double b, char op) {
+double calculate(double a, double b, char op) {
     switch (op) {
     case '+': return a + b;
     case '-': return a - b;
     case '*': return a * b;
-    case '/': return b != 0 ? a / b : 1e-9;  // Обработка деления на ноль
-    default: return 0;
+    case '/': return b != 0 ? a / b : numeric_limits<double>::lowest();
     }
+    return 0;
 }
 
-double calculateMaxValue(double* nums, int n) {
-    if (n == 0) return 0;
-    if (n == 1) return nums[0];
 
-    double maxValue = -1e9;
-
-    for (int i = 0; i < n; i++) {
-        for (int j = i + 1; j < n; j++) {
-            double a = nums[i];
-            double b = nums[j];
-
-            double remaining[n - 1];
-            int k = 0;
-            for (int l = 0; l < n; l++) {
-                if (l != i && l != j) {
-                    remaining[k++] = nums[l];
-                }
-            }
-
-            char ops[] = { '+', '-', '*', '/' };
-            for (int op = 0; op < 4; op++) {
-                remaining[n - 2] = performOperation(a, b, ops[op]);
-                double result = calculateMaxValue(remaining, n - 1);
-                if (result > maxValue) {
-                    maxValue = result;
-                }
-            }
-        }
+double maxExpressionValue(vector<double>& nums, vector<char>& ops, int index = 1) {
+    if (index == nums.size()) {
+        return nums[0];
     }
 
+    double maxValue = numeric_limits<double>::lowest();
+    for (int i = index; i < nums.size(); ++i) {
+        double a = nums[index - 1];
+        double b = nums[index];
+
+        for (char op : ops) {
+            double result = calculate(a, b, op);
+
+            vector<double> newNums = nums;
+            newNums[index - 1] = result;
+            newNums.erase(newNums.begin() + index);
+
+            maxValue = max(maxValue, maxExpressionValue(newNums, ops, index));
+        }
+    }
     return maxValue;
 }
