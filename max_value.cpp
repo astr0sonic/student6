@@ -1,7 +1,6 @@
 #include "max_value.h"
 #include <algorithm>
 #include <limits>
-#include <vector>
 
 using namespace std;
 
@@ -15,42 +14,21 @@ double calculate(double a, double b, char op) {
     return numeric_limits<double>::lowest();
 }
 
-double evaluateExpression(vector<double> nums, vector<char> ops) {
-    double result = nums[0];
-    for (int i = 0; i < ops.size(); ++i) {
-        result = calculate(result, nums[i + 1], ops[i]);
-    }
-    return result;
-}
-
 double calculateMaxValue(double* nums, int n) {
     if (n < 2) return numeric_limits<double>::lowest();
 
     vector<char> ops = { '+', '-', '*', '/' };
     double max_value = numeric_limits<double>::lowest();
-    vector<char> current_ops(n - 1);
 
     sort(nums, nums + n);
     do {
-        vector<int> indices(n - 1, 0);
-
-        while (true) {
-            for (int i = 0; i < n - 1; ++i) {
-                current_ops[i] = ops[indices[i]];
+        for (char op1 : ops) {
+            for (char op2 : ops) {
+                for (char op3 : ops) {
+                    double result = calculate(calculate(calculate(nums[0], nums[1], op1), nums[2], op2), nums[3], op3);
+                    max_value = max(max_value, result);
+                }
             }
-
-            double result = evaluateExpression(vector<double>(nums, nums + n), current_ops);
-            max_value = max(max_value, result);
-
-            int pos = n - 2;
-            while (pos >= 0 && indices[pos] == 3) {
-                indices[pos] = 0;
-                --pos;
-            }
-
-            if (pos < 0) break;
-
-            ++indices[pos];
         }
     } while (next_permutation(nums, nums + n));
 
