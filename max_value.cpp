@@ -23,29 +23,36 @@ double evaluateExpression(vector<double> nums, vector<char> ops) {
     return result;
 }
 
-void findMaxValue(vector<double> nums, vector<char>& ops, int index, double& max_value) {
-    if (index == nums.size() - 1) {
-        double value = evaluateExpression(nums, ops);
-        max_value = max(max_value, value);
-        return;
-    }
-
-    vector<char> operators = { '+', '-', '*', '/' };
-    for (char op : operators) {
-        ops[index] = op;
-        findMaxValue(nums, ops, index + 1, max_value);
-    }
-}
-
 double calculateMaxValue(double* nums, int n) {
-    vector<double> numbers(nums, nums + n);
-    double max_value = numeric_limits<double>::lowest();
+    if (n < 2) return numeric_limits<double>::lowest();
 
-    sort(numbers.begin(), numbers.end());
+    vector<char> ops = { '+', '-', '*', '/' };
+    double max_value = numeric_limits<double>::lowest();
+    vector<char> current_ops(n - 1);
+
+    sort(nums, nums + n);
     do {
-        vector<char> ops(n - 1);
-        findMaxValue(numbers, ops, 0, max_value);
-    } while (next_permutation(numbers.begin(), numbers.end()));
+        vector<int> indices(n - 1, 0);
+
+        while (true) {
+            for (int i = 0; i < n - 1; ++i) {
+                current_ops[i] = ops[indices[i]];
+            }
+
+            double result = evaluateExpression(vector<double>(nums, nums + n), current_ops);
+            max_value = max(max_value, result);
+
+            int pos = n - 2;
+            while (pos >= 0 && indices[pos] == 3) {
+                indices[pos] = 0;
+                --pos;
+            }
+
+            if (pos < 0) break;
+
+            ++indices[pos];
+        }
+    } while (next_permutation(nums, nums + n));
 
     return max_value;
 }
