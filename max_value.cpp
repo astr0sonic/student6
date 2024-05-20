@@ -1,5 +1,4 @@
-#include <iostream>
-#include <vector>
+#include "max_value.h"
 #include <algorithm>
 #include <limits>
 
@@ -16,39 +15,22 @@ double calculate(double a, double b, char op) {
 }
 
 double calculateMaxValue(double* nums, int n) {
+    if (n < 2) return numeric_limits<double>::lowest();
+
     vector<char> ops = { '+', '-', '*', '/' };
     double max_value = numeric_limits<double>::lowest();
 
     sort(nums, nums + n);
     do {
-        vector<char> current_ops(n - 1);
-        function<void(int)> try_operations = [&](int index) {
-            if (index == n - 1) {
-                double result = nums[0];
-                for (int i = 1; i < n; ++i) {
-                    result = calculate(result, nums[i], current_ops[i - 1]);
+        for (char op1 : ops) {
+            for (char op2 : ops) {
+                for (char op3 : ops) {
+                    double result = calculate(calculate(calculate(nums[0], nums[1], op1), nums[2], op2), nums[3], op3);
+                    max_value = max(max_value, result);
                 }
-                max_value = max(max_value, result);
-                return;
             }
-
-            for (char op : ops) {
-                current_ops[index] = op;
-                try_operations(index + 1);
-            }
-            };
-        try_operations(0);
+        }
     } while (next_permutation(nums, nums + n));
 
     return max_value;
-}
-
-int main() {
-    double nums[] = { 1.0, 2.0, 3.0, 4.0 };
-    int n = sizeof(nums) / sizeof(nums[0]);
-
-    double result = calculateMaxValue(nums, n);
-    cout << "Maximum value: " << result << endl;
-
-    return 0;
 }
