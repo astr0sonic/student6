@@ -1,49 +1,54 @@
-#include "max_value.h"
-#include <algorithm>
+#include <iostream>
 #include <vector>
-#include <limits>  // Для использования std::numeric_limits
+#include <algorithm>
+#include <limits>
 
-double calculate(double a, double b, char op) {
-    switch (op) {
-    case '+': return a + b;
-    case '-': return a - b;
-    case '*': return a * b;
-    case '/': return b != 0 ? a / b : std::numeric_limits<double>::lowest();
-    }
-    return 0; // не должно достигаться
-}
-
-double maxExpressionValue(std::vector<double>& nums, const std::vector<char>& ops, int index = 1) {
-    if (index == nums.size()) {
-        return nums[0];
-    }
-
-    double maxValue = std::numeric_limits<double>::lowest();
-    for (int i = index; i < nums.size(); ++i) {
-        // Сохраняем текущие значения
-        double a = nums[index - 1];
-        double b = nums[index];
-
-        // Пробуем все операции
-        for (char op : ops) {
-            // Вычисляем текущее значение
-            double result = calculate(a, b, op);
-
-            // Создаем новый массив чисел
-            std::vector<double> newNums = nums;
-            newNums[index - 1] = result;
-            newNums.erase(newNums.begin() + index);
-
-            // Рекурсивный вызов
-            maxValue = std::max(maxValue, maxExpressionValue(newNums, ops, index));
-        }
-    }
-    return maxValue;
-}
+using namespace std;
 
 double calculateMaxValue(double* nums, int n) {
-    std::vector<double> numVec(nums, nums + n);
-    std::vector<char> ops = { '+', '-', '*', '/' };
+    double calculate(double a, double b, char op) {
+        switch (op) {
+        case '+': return a + b;
+        case '-': return a - b;
+        case '*': return a * b;
+        case '/': return b != 0 ? a / b : numeric_limits<double>::lowest();
+        }
+        return numeric_limits<double>::lowest();
+    }
 
-    return maxExpressionValue(numVec, ops);
+    vector<char> ops = { '+', '-', '*', '/' };
+    double max_value = numeric_limits<double>::lowest();
+
+    sort(nums, nums + n);
+    do {
+        vector<char> current_ops(n - 1);
+        function<void(int)> try_operations = [&](int index) {
+            if (index == n - 1) {
+                double result = nums[0];
+                for (int i = 1; i < n; ++i) {
+                    result = calculate(result, nums[i], current_ops[i - 1]);
+                }
+                max_value = max(max_value, result);
+                return;
+            }
+
+            for (char op : ops) {
+                current_ops[index] = op;
+                try_operations(index + 1);
+            }
+            };
+        try_operations(0);
+    } while (next_permutation(nums, nums + n));
+
+    return max_value;
+}
+
+int main() {
+    double nums[] = { 1.0, 2.0, 3.0, 4.0 };
+    int n = sizeof(nums) / sizeof(nums[0]);
+
+    double result = calculateMaxValue(nums, n);
+    cout << "Maximum value: " << result << endl;
+
+    return 0;
 }
