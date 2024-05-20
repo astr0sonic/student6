@@ -5,17 +5,17 @@
 
 using namespace std;
 
-double calculateMaxValue(double* nums, int n) {
-    double calculate(double a, double b, char op) {
-        switch (op) {
-        case '+': return a + b;
-        case '-': return a - b;
-        case '*': return a * b;
-        case '/': return b != 0 ? a / b : numeric_limits<double>::lowest();
-        }
-        return numeric_limits<double>::lowest();
+double calculate(double a, double b, char op) {
+    switch (op) {
+    case '+': return a + b;
+    case '-': return a - b;
+    case '*': return a * b;
+    case '/': return b != 0 ? a / b : numeric_limits<double>::lowest();
     }
+    return numeric_limits<double>::lowest();
+}
 
+double calculateMaxValue(double* nums, int n) {
     vector<char> ops = { '+', '-', '*', '/' };
     double max_value = numeric_limits<double>::lowest();
 
