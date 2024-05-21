@@ -1,30 +1,27 @@
-#include <iostream>
+#include "bracket.h"
 #include <stack>
 #include <unordered_map>
-#include <string>
 
-using namespace std;
-
-bool isValidBracketSequence(const string& expression) {
-    stack<char> bracketStack;
-    unordered_map<char, char> matchingBrackets = {
+bool checkBrackets(const std::string& s) {
+    std::stack<char> stack;
+    std::unordered_map<char, char> brackets = {
         {')', '('},
         {']', '['},
         {'}', '{'},
         {'>', '<'}
     };
 
-    for (char ch : expression) {
-        if (ch == '(' || ch == '[' || ch == '{' || ch == '<') {
-            bracketStack.push(ch);
-        }
-        else if (ch == ')' || ch == ']' || ch == '}' || ch == '>') {
-            if (bracketStack.empty() || bracketStack.top() != matchingBrackets[ch]) {
+    for (char ch : s) {
+        if (brackets.count(ch)) {
+            if (stack.empty() || stack.top() != brackets[ch]) {
                 return false;
             }
-            bracketStack.pop();
+            stack.pop();
+        }
+        else if (ch == '(' || ch == '[' || ch == '{' || ch == '<') {
+            stack.push(ch);
         }
     }
 
-    return bracketStack.empty();
+    return stack.empty();
 }
