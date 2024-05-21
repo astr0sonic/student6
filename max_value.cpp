@@ -1,6 +1,4 @@
 #include "max_value.h"
-#include <vector>
-#include <algorithm>
 #include <algorithm>
 
 using namespace std;
@@ -15,7 +13,7 @@ double calculateMaxValue(double* a, int n) {
         else if (a[i] < 0) {
             double maxtmp = mx;
             mx = max({ mx - a[i], mn * a[i], mn / a[i] });
-            mn = min({ mn - a[i], maxtmp * a[i], maxtmp / a[i] });
+            mn = min({ mn + a[i], maxtmp * a[i], maxtmp / a[i] });
         }
         else {
             mn = min(0., mn);
