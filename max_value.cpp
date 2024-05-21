@@ -11,7 +11,7 @@ double calculate(double a, double b, char op) {
     case '*': return a * b;
     case '/': return b != 0 ? a / b : numeric_limits<double>::lowest();
     }
-    return 0;
+    return 0 ;
 }
 
 
