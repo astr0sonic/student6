@@ -7,17 +7,14 @@
 #include <sstream>
 #include <iostream>
 
-// Проверка является ли символ оператором
 bool isOperator(char c) {
     return c == '+' || c == '-' || c == '*' || c == '/' || c == '^';
 }
 
-// Проверка является ли символ числом или точкой
 bool isNumber(char c) {
     return std::isdigit(c) || c == '.';
 }
 
-// Получение приоритета оператора
 int getPrecedence(char op) {
     switch (op) {
     case '+':
@@ -33,7 +30,6 @@ int getPrecedence(char op) {
     }
 }
 
-// Применение оператора к двум операндам
 double applyOperator(double a, double b, char op) {
     switch (op) {
     case '+': return a + b;
@@ -47,7 +43,6 @@ double applyOperator(double a, double b, char op) {
     }
 }
 
-// Обработка унарного минуса
 void handleUnaryMinus(std::stack<double>& values) {
     if (values.empty()) throw std::runtime_error("Invalid expression");
     double value = values.top();
@@ -55,11 +50,10 @@ void handleUnaryMinus(std::stack<double>& values) {
     values.push(-value);
 }
 
-// Проверка корректности и парсинг выражения
 bool parseExpression(const std::string& expr, std::string& output) {
     std::stack<char> operators;
     std::stringstream result;
-    bool expectOperand = true; // Ожидается операнд
+    bool expectOperand = true;
 
     for (size_t i = 0; i < expr.size(); ++i) {
         char token = expr[i];
@@ -70,7 +64,7 @@ bool parseExpression(const std::string& expr, std::string& output) {
 
         if (isNumber(token)) {
             if (!expectOperand) {
-                return false; // Неожиданное число
+                return false;
             }
             while (i < expr.size() && (isNumber(expr[i]) || expr[i] == '.')) {
                 result << expr[i++];
@@ -89,7 +83,7 @@ bool parseExpression(const std::string& expr, std::string& output) {
                 operators.pop();
             }
             if (operators.empty() || operators.top() != '(') {
-                return false; // Несоответствие скобок
+                return false;
             }
             operators.pop();
             expectOperand = false;
@@ -106,13 +100,13 @@ bool parseExpression(const std::string& expr, std::string& output) {
             expectOperand = true;
         }
         else {
-            return false; // Некорректный символ
+            return false;
         }
     }
 
     while (!operators.empty()) {
         if (operators.top() == '(') {
-            return false; // Несоответствие скобок
+            return false;
         }
         result << operators.top() << ' ';
         operators.pop();
@@ -122,7 +116,6 @@ bool parseExpression(const std::string& expr, std::string& output) {
     return true;
 }
 
-// Вычисление значения выражения в постфиксной записи
 double evaluatePostfix(const std::string& postfix) {
     std::stack<double> values;
     std::stringstream ss(postfix);
@@ -151,7 +144,6 @@ double evaluatePostfix(const std::string& postfix) {
     return values.top();
 }
 
-// Основная функция вычисления
 double calculate(const std::string& expr) {
     std::string postfix;
     if (!parseExpression(expr, postfix)) {
