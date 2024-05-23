@@ -2,11 +2,15 @@
 #include <algorithm>
 
 int getMaxVolume(int a, int b, int c, int n, int* arr) {
+    std::sort(arr, arr + n);
+
     int maxHeight = 0;
-    for (int i = 0; i < n; i++) {
+    for (int i = n - 1; i >= 0; --i) {
         if (arr[i] <= c) {
-            maxHeight = std::max(maxHeight, arr[i]);
+            maxHeight = arr[i];
+            break;
         }
     }
+
     return a * b * maxHeight;
 }
